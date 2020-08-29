@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'thor'
+require "thor"
 
 module TailwindConfig
   # Handle the application command line parsing
@@ -11,11 +11,11 @@ module TailwindConfig
     # Error raised by this runner
     Error = Class.new(StandardError)
 
-    desc 'version', 'tailwind_config version'
+    desc "version", "tailwind_config version"
     def version
-      require_relative 'version'
+      require_relative "version"
       puts "v#{TailwindConfig::VERSION}"
     end
-    map %w(--version -v) => :version
+    map %w[--version -v] => :version
   end
 end

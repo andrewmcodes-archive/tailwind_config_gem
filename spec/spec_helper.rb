@@ -1,14 +1,30 @@
-require "bundler/setup"
+if ENV["TRAVIS"] || ENV["COVERAGE"]
+  require "simplecov"
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[SimpleCov::Formatter::HTMLFormatter]
+  SimpleCov.start { add_filter "spec" }
+end
+
 require "tailwind_config"
 
+Dir[File.join(__dir__, "support", "shared_contexts", "**/*.rb")].sort.each(&method(:require))
+
 RSpec.configure do |config|
-  # Enable flags like --only-failures and --next-failure
-  config.example_status_persistence_file_path = ".rspec_status"
-
-  # Disable RSpec exposing methods globally on `Module` and `main`
+  config.color = true
   config.disable_monkey_patching!
+  config.example_status_persistence_file_path = "./tmp/rspec-examples.txt"
+  config.filter_run_when_matching :focus
+  config.formatter = ENV["CI"] == "true" ? :progress : :documentation
+  config.order = :random
+  config.shared_context_metadata_behavior = :apply_to_host_groups
+  config.warnings = true
 
-  config.expect_with :rspec do |c|
-    c.syntax = :expect
+  config.expect_with :rspec do |expectations|
+    expectations.syntax = :expect
+    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+  end
+
+  config.mock_with :rspec do |mocks|
+    mocks.verify_doubled_constant_names = true
+    mocks.verify_partial_doubles = true
   end
 end
